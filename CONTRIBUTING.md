@@ -10,6 +10,7 @@ more precise are welcome.
 2. Search the [complaint log](./COMPLAINTS.md) for the underlying failure mode.
 3. Check the [open questions](./docs/open-questions.md) and
    [transcription ledger](./TRANSCRIPTION_LEDGER.md).
+4. Review the six [issue-ready feedback briefs](./FEEDBACK.md).
 
 ## Contribution types
 
@@ -28,6 +29,8 @@ Use GitHub Issues or Discussions when enabled. A useful report includes a short
 title, affected files/sections, reproduction or scenario, existing related C-/D-
 IDs, evidence, smallest correction, and a proposed validation method. Pull
 requests should not mark a complaint resolved merely because prose changed.
+The repository includes structured templates for design findings, evidence, and
+editorial corrections.
 
 ## Sensitive reports
 

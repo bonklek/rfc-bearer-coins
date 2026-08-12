@@ -1,5 +1,7 @@
 # Physical Bearer Cryptocurrency
 
+> **Unimplemented research RFC — valueless test networks only.**
+
 > [!CAUTION]
 > No implementation or security validation exists. Do not use this design on
 > mainnet or with assets of value. Any prototype must use valueless test networks
@@ -17,9 +19,20 @@ commitment/nullifier pool—is a first-class research candidate, not a selected 
 validated version 1 design.
 
 This repository contains architecture prose, decisions, complaints, and research.
-It contains no implementation, hardware prototype, schemas, test vectors, or
-measured security evidence. It is not a security, privacy, legal, regulatory, or
-investment assurance.
+It contains no implementation, hardware prototype, normative wire encoding,
+interoperability test vectors, or measured security evidence. It is not a
+security, privacy, legal, regulatory, or investment assurance.
+
+## Start here
+
+- **New to the idea?** Read the one-page
+  [plain-language explainer](./EXPLAINER.md).
+- **Evaluating maturity or risk?** Read [Project status](./STATUS.md).
+- **Reviewing the selected protocol target?** Read
+  [RFC-0001](./rfcs/0001-physical-bearer-cryptocurrency/README.md).
+- **Looking for a term?** Use the [glossary](./GLOSSARY.md).
+- **Ready to contribute?** Choose an issue-ready question from
+  [Feedback wanted now](./FEEDBACK.md).
 
 ## Current state
 
@@ -65,12 +78,14 @@ claim.
 
 ### Five-minute orientation
 
-1. [Project status](./STATUS.md)
-2. [Request for comments](./REQUEST_FOR_COMMENTS.md)
-3. [Master architecture](./docs/master-architecture.md)
+1. [Plain-language explainer](./EXPLAINER.md)
+2. [Architecture at a glance](./docs/architecture-at-a-glance.md)
+3. [Project status](./STATUS.md)
+4. [Request for comments](./REQUEST_FOR_COMMENTS.md)
 
 ### Current version 1 design
 
+- [RFC-0001: canonical version 1 draft profile](./rfcs/0001-physical-bearer-cryptocurrency/README.md)
 - [Document authority and supersession](./DOCUMENT_AUTHORITY.md)
 - [Decision transcription ledger](./TRANSCRIPTION_LEDGER.md)
 - [Coin hardware](./docs/coin-hardware.md)
@@ -92,9 +107,12 @@ claim.
 ## Feedback
 
 The current priority questions are listed in
-[Feedback wanted now](./STATUS.md#feedback-wanted-now). See
+[Feedback wanted now](./FEEDBACK.md). See
 [Contributing](./CONTRIBUTING.md) for report structure and
 [Security policy](./SECURITY.md) for sensitive issues.
+
+The exact GitHub description, topics, settings, and soft-launch sequence are in
+the [publication guide](./PUBLICATION.md).
 
 ## License and provenance
 

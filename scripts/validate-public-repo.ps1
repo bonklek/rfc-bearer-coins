@@ -8,6 +8,23 @@ $publicFiles = Get-ChildItem -LiteralPath $repoRoot -Recurse -File | Where-Objec
     $_.FullName -notmatch '[\\/]validation-output[\\/]'
 }
 
+$requiredPublicEntries = @(
+    'README.md',
+    'EXPLAINER.md',
+    'STATUS.md',
+    'GLOSSARY.md',
+    'FEEDBACK.md',
+    'PUBLICATION.md',
+    'DOCUMENT_AUTHORITY.md',
+    'rfcs/README.md',
+    'rfcs/0001-physical-bearer-cryptocurrency/README.md'
+)
+foreach ($entry in $requiredPublicEntries) {
+    if (-not (Test-Path -LiteralPath (Join-Path $repoRoot $entry))) {
+        $errors.Add("Missing public entry point: $entry")
+    }
+}
+
 $contentFiles = $publicFiles | Where-Object { $_.FullName -ne $PSCommandPath }
 
 $forbidden = [ordered]@{
@@ -121,6 +138,17 @@ if ($criticalCount -ne 7) {
 
 if (Test-Path -LiteralPath (Join-Path $repoRoot 'review-queue')) {
     $errors.Add('Raw review-queue directory must remain outside the public repository')
+}
+
+$issueFormRoot = Join-Path $repoRoot '.github/ISSUE_TEMPLATE'
+foreach ($form in Get-ChildItem -LiteralPath $issueFormRoot -Filter '*.yml' -File) {
+    if ($form.Name -eq 'config.yml') { continue }
+    $formText = Get-Content -LiteralPath $form.FullName -Raw -Encoding UTF8
+    foreach ($requiredKey in @('name', 'description', 'body')) {
+        if ($formText -notmatch "(?m)^${requiredKey}:") {
+            $errors.Add("Issue form $($form.Name) is missing required top-level key: $requiredKey")
+        }
+    }
 }
 
 if ($errors.Count -gt 0) {

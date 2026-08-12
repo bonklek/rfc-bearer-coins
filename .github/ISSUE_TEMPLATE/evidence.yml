@@ -1,0 +1,44 @@
+name: Research or implementation evidence
+description: Add primary-source, measurement, prototype, or test evidence to an existing question.
+title: "[Evidence] "
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Finding, decision, or RFC clause addressed
+      placeholder: C-055; RFC-0001 section 3.2
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link the primary source, code, data, test vectors, measurements, or reproducible prototype.
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Method and environment
+      description: State versions, hardware, network, configuration, fixtures, assumptions, and reproduction steps.
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim supported or contradicted
+      description: State the narrow conclusion this evidence justifies and what it does not establish.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Artifacts and validation
+      description: Provide hashes, logs, vectors, traces, or independent reproduction where available.
+  - type: checkboxes
+    id: environment
+    attributes:
+      label: Environment acknowledgement
+      options:
+        - label: Any protocol prototype used only valueless test networks.
+          required: true

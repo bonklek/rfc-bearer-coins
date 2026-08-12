@@ -12,6 +12,9 @@ or assets of value.
 
 ## Related docs
 
+- [Plain-language explainer](../EXPLAINER.md)
+- [RFC-0001: version 1 profile](../rfcs/0001-physical-bearer-cryptocurrency/README.md)
+- [Architecture at a glance](./architecture-at-a-glance.md)
 - [Coin hardware](./coin-hardware.md)
 - [Architecture B: hardware-held shielded notes](./architecture-b-commitment-pool.md)
 - [Key lifecycle and claim protocol](./key-lifecycle.md)

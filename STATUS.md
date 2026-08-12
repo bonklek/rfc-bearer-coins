@@ -13,6 +13,7 @@ Last reviewed: 2026-08-12
 | Dimension | Current state |
 |---|---|
 | Product | RFC-stage thought experiment |
+| Canonical profile | [RFC-0001](./rfcs/0001-physical-bearer-cryptocurrency/README.md), draft and incomplete |
 | Version 1 baseline | Architecture A: finite generate-on-advance epochs and one deployed immutable smart account per active epoch |
 | Competing research | Architecture B: hardware-held shielded notes; no proof system or circuit selected |
 | Normative specification | Incomplete; the logical `ClaimIntent` is canonical, but encodings and test vectors do not exist |
@@ -84,3 +85,5 @@ The most useful near-term contributions are:
 6. privacy analysis for BSLRR transport and Architecture B's proving boundary.
 
 See [Contributing](./CONTRIBUTING.md) for how to structure feedback.
+Each item is expanded into an issue-ready brief in
+[Feedback wanted now](./FEEDBACK.md).

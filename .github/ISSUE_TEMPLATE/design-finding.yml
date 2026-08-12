@@ -1,0 +1,72 @@
+name: Security or design finding
+description: Report a concrete failure mode, contradiction, or missing boundary.
+title: "[Finding] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include credentials, personal data, private infrastructure, or live-value exploit details. Follow SECURITY.md for sensitive reports.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Hardware and physical security
+        - Protocol and state machine
+        - Ethereum and transport
+        - Privacy and trust
+        - Register and human factors
+        - Business, operations, or governance
+        - Cross-cutting specification
+    validations:
+      required: true
+  - type: input
+    id: related
+    attributes:
+      label: Related complaint or decision IDs
+      description: List any related C-* or D-* identifiers, or say none found.
+      placeholder: C-004, C-061, D-004
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Concrete failure mechanism
+      description: State the preconditions, attacker or fault, exact behavior, and affected boundary.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Explain what can be lost, misrepresented, linked, blocked, or made unsafe.
+    validations:
+      required: true
+  - type: textarea
+    id: coverage
+    attributes:
+      label: Existing coverage and why it is insufficient
+      description: Link the relevant RFC, documentation, complaint, or proposed solution.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Smallest proposed correction
+      description: Describe a bounded specification, implementation, disclosure, or evidence change.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation method
+      description: Describe tests, vectors, models, measurements, or review that would demonstrate the correction.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety acknowledgement
+      options:
+        - label: I did not test against real assets, third-party systems, or people without authorization.
+          required: true

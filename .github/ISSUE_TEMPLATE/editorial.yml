@@ -1,0 +1,34 @@
+name: Editorial or transcription correction
+description: Report unclear status, stale wording, broken navigation, or a supersession mismatch.
+title: "[Editorial] "
+body:
+  - type: input
+    id: location
+    attributes:
+      label: File and section
+      placeholder: docs/key-lifecycle.md — Interrupted claim
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Quote only the minimum necessary text and explain why it is unclear, stale, or contradictory.
+    validations:
+      required: true
+  - type: input
+    id: authority
+    attributes:
+      label: Controlling RFC or decision
+      description: Identify RFC-0001, a D-* decision, or DOCUMENT_AUTHORITY.md where applicable.
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed correction
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: How to verify the correction
+      description: Include link, anchor, terminology, schema, or repository-search checks.

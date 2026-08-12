@@ -7,14 +7,23 @@ reliable chronological supersession. Explicit status controls.
 
 When two passages conflict, apply this order:
 
-1. Accepted D-* decisions in the [decision log](./PROPOSED_SOLUTIONS.md#decision-log).
-2. The [recommended version 1 profile](./PROPOSED_SOLUTIONS.md#recommended-version-1-profile).
-3. Sections explicitly marked normative, especially the logical
+1. An accepted later D-* decision that explicitly states it supersedes a version
+   1 RFC boundary, until its transcription is integrated.
+2. [RFC-0001](./rfcs/0001-physical-bearer-cryptocurrency/README.md), the canonical
+   integrated version 1 draft profile.
+3. Accepted D-* decisions in the [decision log](./PROPOSED_SOLUTIONS.md#decision-log)
+   and the [recommended version 1 profile](./PROPOSED_SOLUTIONS.md#recommended-version-1-profile)
+   as decision rationale and gap interpretation.
+4. Sections explicitly incorporated by RFC-0001, especially the logical
    [`ClaimIntent`](./docs/key-lifecycle.md#claim-semantics).
-4. Integrated domain documents in `docs/`.
-5. README, request-for-comments summaries, and open-question lists.
-6. The append-only complaint log and research logs as rationale and evidence,
+5. Integrated domain documents in `docs/`.
+6. README, request-for-comments summaries, and open-question lists.
+7. The append-only complaint log and research logs as rationale and evidence,
    not current specification.
+
+RFC-0001 is deliberately incomplete. Its authority identifies the selected
+version 1 target; it does not make missing encodings, implementations, tests, or
+evidence exist, and no implementation can currently claim conformance.
 
 An accepted decision does not resolve its complaint. Complaint state changes only
 when the required specification, implementation, test, evidence, policy, or

@@ -222,6 +222,9 @@ authority.
 
 ## Current documents
 
+- [Plain-language explainer](./EXPLAINER.md)
+- [RFC-0001: canonical version 1 draft profile](./rfcs/0001-physical-bearer-cryptocurrency/README.md)
+- [Glossary](./GLOSSARY.md)
 - [Master architecture](./docs/master-architecture.md)
 - [Coin hardware](./docs/coin-hardware.md)
 - [Key lifecycle and claim protocol](./docs/key-lifecycle.md)
@@ -236,6 +239,7 @@ authority.
 - [Document authority and supersession](./DOCUMENT_AUTHORITY.md)
 - [Proposed solutions to the complaint log](./PROPOSED_SOLUTIONS.md)
 - [Complaint triage (C-012–C-096)](./ISSUE_TRIAGE.md)
+- [Feedback wanted now](./FEEDBACK.md)
 
 ## Current status
 

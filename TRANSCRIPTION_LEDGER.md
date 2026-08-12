@@ -4,6 +4,10 @@ This ledger separates accepted direction from specification integration and
 evidence. `Integrated` means the public documents state the accepted boundary;
 it does not mean implemented, tested, validated, or resolved.
 
+[RFC-0001](./rfcs/0001-physical-bearer-cryptocurrency/README.md) is the canonical
+integrated profile. The domain destinations below own the detailed clauses it
+incorporates by reference.
+
 | Decision | Accepted boundary | Canonical destination | Integration | Evidence state |
 |---|---|---|---|---|
 | D-001 | Local response authenticates a core, not physical co-location | `docs/verification-and-bslrr.md` | Integrated | Prototype gate |
