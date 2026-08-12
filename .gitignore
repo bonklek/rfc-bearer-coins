@@ -1,0 +1,26 @@
+# Local and editor state
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*.bak
+*~
+.vscode/
+.idea/
+
+# Secrets and local configuration must never enter this public repository
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Raw internal review artifacts are intentionally outside the public tree
+review-queue/
+
+# Generated validation output
+validation-output/
