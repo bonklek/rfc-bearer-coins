@@ -91,7 +91,7 @@ until:
 
 One pull records customer approval, locks those terms, and enables only the
 approved routing sequence. It does not itself transfer ownership; D-037's secure
-per-coin gate crossing remains the ownership boundary.
+per-coin gate crossing remains the protocol acceptance event.
 
 For each approved claim coin, an indexed cam, ratchet, or equivalently bounded
 mechanism must:
@@ -142,27 +142,28 @@ but cannot be required for the lever to provide an accessible standard flow.
 14. Only for each approved claim coin, and only after its one-way gate crossing, does the indexed mechanism cause one fresh center released-to-pressed-to-released cycle while applying the side-button state.
 15. The merchant issues a receipt showing the signed intent digest, the authorized terms, and current onchain status.
 
-Example primary confirmation:
+Example prototype confirmation:
 
 ```text
-PAY:                            47.00 USD
+TESTNET / NO VALUE
+DEMO TOTAL:                47.00 TEST-USD
 TO:                             Merchant example
 ACTION:                         2 coins accepted, 1 coin claimed
 
-20 USDC   Ethereum [icon]:      20.00 USD   Issuer-controlled; freezable
-0.00022 WBTC Ethereum [icon]:   14.82 USD   Wrapped; custodian-dependent
-0.0038 ETH Ethereum [icon]:     12.31 USD   Native asset
+20 TEST-USD     Testnet [icon]: 20.00   Issuer-controlled; freezable
+0.00022 TEST-W  Testnet [icon]: 14.82   Wrapped; custodian-dependent
+0.0038 TEST-N   Testnet [icon]: 12.31   Native asset
 
-Tendered at quoted rates:       47.13 USD
-Change due:                      0.13 USD
-Customer fees:                    0.00 USD
+Tendered at demo rates:          47.13
+Demo change due:                  0.13
+Demo fees:                         0.00
 Quote expires in:                  18 s
 ```
 
-The physical coin does not show chain in the first generation. The primary register
-summary and audio output use the short approved-chain name and recognizable icon
-beside every supported asset. Icons are supplemental only: the written chain name
-is mandatory and must be spoken or otherwise rendered through the nonvisual path.
+The prototype coin and register always show `TESTNET / NO VALUE`. The primary
+register summary and audio output use the short test-network name beside every
+asset. Icons are supplemental: the written network name is mandatory and must be
+spoken or otherwise rendered through the nonvisual path.
 
 The secondary detail view must show the exact chain ID, contract or native-asset
 identity, issuer or custody model, proxy and implementation identity,
@@ -186,24 +187,26 @@ A checkout may use multiple assets, but each physical coin represents one AssetI
 
 The register should never aggregate several token balances inside one coin into one displayed value. Unsupported or unsolicited tokens at the account are not represented tender.
 
-## Ownership boundary
+## Commercial acceptance boundary
 
-Verification and presence in the waiting chamber do not transfer ownership.
-Customer approval plus secure crossing of either the one-way accept gate or the
-one-way claim gate transfers ownership to the merchant.
+Verification and presence in the waiting chamber are not acceptance events. The
+protocol records customer approval plus secure crossing of either the one-way
+accept gate or one-way claim gate as the intended commercial acceptance event.
+The table below is a reference operating allocation, not a legal determination;
+applicable agreements and law control title, bailment, and loss allocation.
 
-| Physical or settlement state | Owner or claimant | Custody and loss rule |
+| Physical or settlement state | Reference treatment | Operational rule |
 |---|---|---|
-| Input, verification, or visible waiting | Customer | Register operator is bailee and must return the same coin on rejection, cancellation, or failure. |
-| Approved, gate not crossed | Customer | Register remains bailee; loss or damage caused by the equipment follows the operator agreement. |
-| Return path | Customer | No ownership transfer occurred. |
-| Accept gate crossed | Merchant | Merchant owns the active coin for inventory or recirculation and bears ordinary coin and backing risk. |
-| Claim gate crossed, before authorization | Merchant | Merchant chose irreversible claim custody; failure or quarantine is not shifted back to the customer. |
-| Authorization captured or submitted | Merchant | Merchant owns the pending claim and bears submission and chain risk unless a provider accepts it. |
-| Provider signed acquisition acceptance | Provider under bound terms | Provider assumes the identified acquisition and payout obligation; unaccepted risks remain with merchant. |
-| Direct claim finalized to merchant | Merchant | Merchant owns settled backing. |
+| Input, verification, or visible waiting | Treat as customer property | Return the same coin on rejection, cancellation, or failure. |
+| Approved, gate not crossed | Treat as customer property | Equipment-caused loss or damage follows the operator agreement. |
+| Return path | Treat as customer property | No protocol acceptance event occurred. |
+| Accept gate crossed | Treat as merchant property | Record the active coin as inventory or recirculating tender. |
+| Claim gate crossed, before authorization | Treat as merchant property | Quarantine on failure rather than returning it as ordinary customer tender. |
+| Authorization captured or submitted | Treat as a merchant pending claim | Track submission and chain risk unless a provider signs an acceptance. |
+| Provider signed acquisition acceptance | Apply the provider's signed terms | Record the identified acquisition and payout obligation. |
+| Direct claim finalized to merchant | Treat as merchant settlement | Record the finalized backing transfer. |
 
-A post-gate jam quarantines merchant-owned property. A pre-gate jam invokes the
+A post-gate jam quarantines the coin under the merchant-property treatment. A pre-gate jam invokes the
 same-coin return procedure. Intentional customer fraud may create ordinary legal
 recourse supported by receipts and tracking evidence, but no protocol clawback
 reverses a completed physical acceptance.
@@ -364,7 +367,7 @@ Software outside the secure controller cannot bypass this sequence.
 The register should retain the coin and the prepared authorization until it has either:
 
 - submitted the operation;
-- delivered a recoverable copy to the merchant;
+- delivered a durable copy to the merchant;
 - or returned the coin with an explicit pending/warning state under a defined failure procedure.
 
 The machine must not claim onchain finality merely because it obtained a signature.
@@ -388,13 +391,13 @@ move one at a time, physical acceptance cannot be instantaneous across the whole
 basket. Each secure gate crossing therefore creates a signed per-coin acceptance
 event. The checkout is complete only after all selected crossings are recorded.
 
-If routing stops after a strict subset crosses, D-037 applies independently to
-each coin: crossed coins are merchant property and uncrossed coins remain customer
-property. The merchant must perform the exact refund, return, or credit remedy
-committed by `BasketTerms`; the customer does not bear register failure. The
-receipt identifies the accepted subset and unresolved remedy. A crossed
-`AUTH_PENDING` coin is quarantined or retained as merchant property and is never
-returned as ordinary active tender.
+If routing stops after a strict subset crosses, the reference commercial model
+applies D-037 independently to each coin: crossed coins are treated as merchant
+property and uncrossed coins as customer property. The merchant must perform the
+refund, return, or credit remedy committed by `BasketTerms`. The receipt identifies
+the accepted subset and unresolved remedy. A crossed `AUTH_PENDING` coin is
+quarantined or retained under the merchant treatment and is never returned as
+ordinary active tender.
 
 For a complete authorization set on one supported chain, an immutable
 `BasketClaim` contract calls every account claim in one Ethereum transaction. Any
@@ -439,8 +442,8 @@ last durable state:
 
 | Failure point | Result |
 |---|---|
-| Before customer approval or gate crossing | Cancel and return the same customer-owned coin. |
-| After claim-gate crossing, before authorization commit | Merchant owns an `ACTIVE` coin; retain it for recirculation or a later online claim. |
+| Before customer approval or gate crossing | Cancel and return the same coin under the customer-property treatment. |
+| After claim-gate crossing, before authorization commit | Treat the `ACTIVE` coin as merchant property; retain it for recirculation or a later online claim. |
 | After durable authorization commit | Merchant retains the `AUTH_PENDING` coin and exact authorization in a durable retry queue. |
 | After submission with unknown outcome | Reconcile account state and replay only the identical authorization if still executable. |
 

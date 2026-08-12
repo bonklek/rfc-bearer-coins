@@ -54,8 +54,9 @@ The merchant can bypass the provider and keep, recirculate, or self-claim coins.
 
 ### Provider acquisition boundary
 
-The merchant owns the active coin or pending claim after the customer-approved
-physical acceptance gate. A provider assumes risk only when it issues a signed
+The reference operating model treats the active coin or pending claim as merchant
+property after the customer-approved physical acceptance gate. A provider records
+its obligations only when it issues a signed
 `ProviderAcceptance` bound to:
 
 ```text
@@ -276,7 +277,9 @@ Variables worth modeling before a pilot:
 - support and replacement cost;
 - revenue share paid to operators.
 
-Pilot measurements should include customer comprehension, time per coin, jam rate, quote expiry, partial claim failure, offline acceptance behavior, and which assurance levels merchants actually use.
+Pilot measurements should include customer comprehension, time per coin, jam rate,
+quote expiry, partial claim failure, offline acceptance behavior, and which checks
+merchants actually use.
 
 ## First-market constraint
 

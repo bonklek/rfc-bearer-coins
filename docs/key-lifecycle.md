@@ -60,7 +60,7 @@ AUTH_PENDING
   -> reproduce only the same exact authorization
   -> verify finality-rooted completion of the authorized operation
   -> complete the authorized claim, rotation, migration, or private refresh
-  -> or enter an explicit recovery protocol that first invalidates the old authorization
+  -> future only: enter a recovery protocol that first invalidates the old authorization
 
 TAMPER_SUSPECTED
   -> verify: report irreversible tamper evidence
@@ -222,7 +222,7 @@ AUTH_PENDING(kind = CLAIM)
   -> re-release the identical stored signature without invoking the key
   -> accept only finalized proof of zero represented-asset balance and retired
      bearer authority, then retire the local epoch
-  -> or use a recovery protocol that makes the old authorization unusable first
+  -> future only: use a recovery protocol that makes the old authorization unusable first
 ```
 
 The coin does not accept another claim, rotation, migration, sweep, or private-refresh intent from `AUTH_PENDING`. It may reproduce only the exact authorization already committed for that epoch and semantic nonce.
@@ -237,7 +237,11 @@ The stable monetary operation identifier is derived from chain, account, epoch,
 semantic nonce, and canonical intent digest. A transaction hash, UserOperation
 hash, bundler wrapper, or newly quoted gas parameter is not the monetary identity.
 
-Simply issuing a competing recovery rotation is not a safe recovery protocol because both authorizations would remain live. Recovery details are intentionally separate, but any accepted design must invalidate or make unexecutable the pending authorization before a different monetary authorization is released. Until then, the client reports the exact pending operation rather than presenting the coin as generally active.
+Issuing a competing recovery rotation is unsafe because both authorizations
+would remain live. No recovery protocol is accepted. Any future design must make
+the pending authorization unusable before releasing a different monetary
+authorization. Until then, the client reports the pending operation rather than
+presenting the coin as generally active.
 
 An earlier draft treated any interrupted claim as evidence that the raw key may have been exposed. That is too broad for the non-exporting protocol. The accurate statement is that the old epoch may have emitted a still-live authorization or may have suffered a fault at a security-critical boundary.
 

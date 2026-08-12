@@ -50,21 +50,27 @@ The display is a human-readable label for signed coin state. An active label mea
 
 ### Local attestation does not prove physical co-location
 
-A fresh local response proves that an approved secure core answered the verifier's challenge and reported its local state. It does not by itself prove that the responding core is inside the physical shell presented to the recipient. A counterfeit object may attempt to relay the live exchange to a genuine activated coin elsewhere.
+A fresh local response proves that a core accepted under the verifier's selected
+hardware policy answered the challenge and reported local state. It does not
+prove that the core is inside the physical shell. A counterfeit object may relay
+the exchange to a genuine activated coin elsewhere.
 
 Fresh nonces prevent reuse of an old recorded response; they do not prevent a live relay. Deliberate side-button activation, complete RF disconnection at rest, short bounded sessions, and a constrained NFC profile make relay less convenient but are not treated as proof of distance.
 
-The accepted version 1 assurance model is therefore progressive:
+Version 1 exposes these optional checks:
 
 ```text
 physical inspection
-  -> optional local core attestation
-  -> optional BSLRR continuity
-  -> optional online backing observation
-  -> optional immediate claim
+local core attestation
+BSLRR continuity
+online chain observation
+claim
 ```
 
-The recipient chooses the assurance level. Physical handoff and offline acceptance remain possible at every denomination; clients and commercial counterparties may recommend or require stronger evidence under their own policies. Immediate claim is the strongest ordinary merchant response because it transfers the backing instead of relying on continued physical authenticity.
+The checks are complementary, not a confidence scale. Physical handoff and
+offline acceptance remain possible at every denomination. A successful claim
+transfers backing instead of relying on continued physical authenticity, but it
+still does not authenticate the shell.
 
 ### Verification and claim are physically distinct
 
@@ -88,18 +94,17 @@ terms, exceed the approved claim count, or stroke a verification-only coin, and
 it disarms on completion, cancellation, or failure. Authoritative terms are
 available visually and nonvisually before the lever unlocks.
 
-### Physical acceptance transfers ownership
+### Intended commercial acceptance event
 
-Before customer approval and secure gate crossing, the customer owns the coin and
-the register operator holds it as bailee. Approval plus crossing either the
-verification-only accept gate or the claim gate transfers ownership and ordinary
-coin risk to the merchant. Claim submission and confirmation are the merchant's
-chosen settlement process, not a condition that keeps risk with the customer.
+The protocol records customer approval plus secure crossing of either the
+verification-only accept gate or the claim gate as the intended commercial
+acceptance event. The reference operating model treats the coin as customer
+property before that event and merchant property afterward. Applicable agreements
+and law determine title, bailment, and loss allocation.
 
-A managed provider assumes acquisition or payout risk only after issuing a signed
-acceptance bound to the canonical settlement identity and terms. Equipment failure
-follows the actor controlling custody. Fraud remedies are attributable commercial
-or legal claims, not protocol clawbacks.
+A managed provider records its obligations by issuing a signed acceptance bound
+to the settlement identity and terms. The protocol does not itself enforce those
+commercial obligations or create legal clawbacks.
 
 ### Version 1 has no private-key export path
 
@@ -152,37 +157,40 @@ value.
 
 Baseline verifier clients should be open source, free to use, and functional without a mandatory service. Manufacturers, laboratories, monitors, asset-policy publishers, and application maintainers may publish signed feeds. Users and commercial operators choose which feeds and policies to use.
 
-## First reference product
+## Version 1 prototype scope
 
-The initial target is:
+Version 1 prototypes use:
 
 - a universal coin-sized or token-sized shell;
 - passive NFC power with deliberate mechanical activation;
 - a secure core that owns the monetary and attestation keys;
 - a persistent e-paper or equivalent bistable display;
-- Ethereum mainnet as the first chain;
-- ETH, mainnet USDC, and mainnet WBTC as illustrative initial policy entries;
+- an Ethereum-compatible execution model on valueless test deployments;
+- test assets modeling native, issuer-controlled, and wrapped/custodial behavior;
 - a minimal P-256-controlled smart account;
 - transparent rotation and direct claim;
 - optional online backing verification;
 - optional BSLRR handoff continuity;
 - a low-throughput transparent register prototype.
 
-The specific assets are operator policy, not universal protocol law. WBTC must be described as wrapped and custody-dependent, not as native Bitcoin.[^wbtc]
+Mainnet contracts and asset policies are future analysis, not prototype
+configuration. Any future WBTC policy must describe it as wrapped and
+custody-dependent, not as native Bitcoin.[^wbtc]
 
 ## Competing onchain architectures
 
-The smart-account design above is **Architecture A** and remains the first
-reference prototype. **Architecture B** is now a first-class competing design:
+The smart-account design above is **Architecture A** and remains the version 1
+prototype. **Architecture B** is a separate research candidate:
 
 ```text
-Architecture A: one identifiable P-256 smart account per active coin
+Architecture A: an identifiable P-256 smart account for the active represented load
 Architecture B: one hidden hardware-authorized note in a shared commitment pool
 ```
 
 Architecture B proposes a Merkle commitment tree and one-time nullifiers. If a
 construction is selected, implemented, and validated, a private presentation
-would aim to prove that the responding approved core controls a correctly
+would aim to prove that the responding core meets the verifier's selected
+hardware policy and controls a correctly
 denominated, currently unspent note without revealing the exact hardware identity,
 commitment, or backing account. Claim publishes the note's nullifier and transfers
 the exact denomination; the contract rejects reuse of that nullifier.
@@ -290,7 +298,7 @@ begin all-three-button claim without a fresh chain check, a working submission
 path, durable retry storage, and available gas or sponsorship. If connectivity
 later fails, ownership follows the physical gate and monetary state follows the
 last durable core transition: return before crossing, retain an active
-merchant-owned coin before authorization, or queue the exact pending
+coin treated as merchant property before authorization, or queue the pending
 authorization after capture.
 
 ### Transparent refresh
@@ -355,13 +363,13 @@ These are separate research tracks. The classical design does not claim quantum 
 | Sealed-by-core | The core reports that the key was internally generated or activated and has not undergone a claim transition or any export (which version 1 forbids). This is a hardware claim, not an absolute proof of non-exposure. |
 | Claim | Deliberate all-three-button authorization to transfer the represented asset or account authority, or consume a shielded note, for a specified destination. |
 | Backing check | Online check of current chain state for the represented account and asset or proof that an Architecture B note is included and unspent. |
-| Local attestation | Fresh proof that an approved core answered and reported its own state. It does not by itself prove that the core is inside the presented shell. |
+| Local attestation | Fresh proof that a core accepted under the verifier's selected hardware policy answered and reported its own state. It does not by itself prove that the core is inside the presented shell. |
 | BSLRR | Optional Bearer-Since-Last-Rotation Record, described in the verification document. |
 | Retired slot | A monetary slot that the core will not activate again. |
 | Exhausted core | A finite-slot core with no unused certified slots. |
 | Refurbished coin | Reused non-security-critical hardware fitted with a new externally certified secure core. |
 
-## What is deliberately unresolved
+## Unresolved design choices
 
 The architecture does not yet select:
 

@@ -14,7 +14,7 @@ Last reviewed: 2026-08-12
 |---|---|
 | Product | RFC-stage thought experiment |
 | Canonical profile | [RFC-0001](./rfcs/0001-physical-bearer-cryptocurrency/README.md), draft and incomplete |
-| Version 1 baseline | Architecture A: finite generate-on-advance epochs and one deployed immutable smart account per active epoch |
+| Version 1 baseline | Architecture A: finite generate-on-advance keys and deployed immutable smart accounts for active represented loads; account reuse across key rotation is unresolved |
 | Competing research | Architecture B: hardware-held shielded notes; no proof system or circuit selected |
 | Normative specification | Incomplete; the logical `ClaimIntent` is canonical, but encodings and test vectors do not exist |
 | Implementation | None |
@@ -22,6 +22,7 @@ Last reviewed: 2026-08-12
 | Security validation | None; automated adversarial drafting is not an independent security audit |
 | Privacy validation | None; no production privacy claim is made |
 | Complaint remediation | 77 Open, 18 Partially addressed, 1 Resolved/rejected for version 1 |
+| Product decisions | Five explicit questions remain in [Open product decisions](./OPEN_DECISIONS.md) |
 
 Accepted product decisions are not the same as resolved complaints. A decision
 may establish direction while its specification, implementation, tests, measured
@@ -44,11 +45,12 @@ Seven complaints are currently Critical:
 
 Other launch-blocking questions include permanent `AUTH_PENDING` liveness,
 same-chain-ID fork replay ([C-066](./COMPLAINTS.md#c-066-chain-id-does-not-isolate-authorizations-across-same-id-chain-splits)),
-passive proof verification, complete-equipment safety, and economic viability.
+passive proof verification; electrical, RF, thermal, materials, mechanical, and
+fault testing of the assembled coin and register; and economic viability.
 
 ## Accepted version 1 boundaries
 
-- Architecture A is the baseline. Architecture B is a first-class research
+- Architecture A is the baseline. Architecture B is a separate research
   candidate and requires a later, explicit superseding decision.
 - The logical epoch budget is finite and irreversible. The next monetary key is
   generated only after the prior epoch closes. Physical compartmentalization is
@@ -58,9 +60,10 @@ passive proof verification, complete-equipment safety, and economic viability.
   that an implementation protects key confidentiality.
 - Counterfactual funding, EIP-7702 accounts, arbitrary execution, unsolicited-token
   sweeping, implicit account-funded gas, and production privacy claims are excluded.
-- `ClaimIntent` is the stable monetary/customer authorization. A replaceable
-  `TransportAuthorization` separately binds its digest to chain/fork, EntryPoint,
-  fee and gas caps, validity, paymaster, and sponsor nonce.
+- `ClaimIntent` is the stable claim/customer authorization. Rotation, migration,
+  and evacuation authorization schemas are not yet selected. A replaceable
+  `TransportAuthorization` binds a claim digest to chain/fork, EntryPoint, fee and
+  gas caps, validity, paymaster, sponsor nonce, and a fee-failure policy digest.
 - The accepted evidence dimensions are `coreState`, `observedChainState`, and
   `externalRiskStatus[]`; they must never be collapsed into a single validity bit.
 

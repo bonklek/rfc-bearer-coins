@@ -1,6 +1,8 @@
 # Verification and BSLRR
 
-The system offers an assurance ladder, not a binary valid/invalid oracle. A recipient chooses an appropriate level for the denomination, counterparty, connectivity, and risk.
+These checks are complementary, not a single confidence score. Each result must
+identify its source, freshness, and the question it answers. A recipient chooses
+which checks to use for the denomination, counterparty, connectivity, and risk.
 
 ## Related docs
 
@@ -11,22 +13,23 @@ The system offers an assurance ladder, not a binary valid/invalid oracle. A reci
 - [Trust, manufacturing, and compromise response](./trust-and-manufacturing.md)
 - [Register and checkout](./register-and-checkout.md)
 
-## Assurance ladder
+## Available checks
 
-| Level | Check | What it can establish |
-|---|---|---|
-| 0 | Physical inspection | Appearance, display, obvious damage, and possession only. |
-| 1 | Fresh local attestation | A core accepted by the client's cached policy signed the current response and reported its local state. This does not establish physical co-location with the presented shell. |
-| 1A | Proof-activated offline state | The core reports that this slot entered `ACTIVE` only after internally verifying its profile's finalized funding proof, and that it has emitted no monetary authorization since. This is historical proof-activation evidence, not a current chain query. |
-| 2 | BSLRR continuity | Optional recorded handoff continuity and event counts for the current key epoch. |
-| 3 | Live RPC query | A selected provider reported current account, asset, balance, key, and nonce state. |
-| 4 | Redundant queries | Several independently selected providers agreed. This reduces provider error but is not consensus verification by itself. |
-| 5 | Proof-checked state | The client verified relevant state proofs against authenticated headers. |
-| 6 | Light-client check | The client verified headers through an Ethereum light-client design and checked state evidence. |
-| 7 | Full-node check | The verifier used its own execution and consensus clients. |
-| 8 | Claim | The coin authorized a complete typed `ClaimIntent`. Finality still depends on chain inclusion and confirmation. |
+| Check | What it can establish |
+|---|---|
+| Physical inspection | Appearance, display, obvious damage, and possession only. |
+| Fresh local attestation | A core accepted under the verifier's selected hardware policy signed the response and reported local state. This does not establish physical co-location with the shell. |
+| Proof-activated offline state | The core reports that the slot entered `ACTIVE` after verifying its configured funding-proof profile and that it has emitted no later monetary authorization. This is historical core evidence, not a current chain query. |
+| BSLRR continuity | The coin authenticated a sequence of local root-update ceremonies for the current key epoch. It does not identify the participants or prove that every handoff was recorded. |
+| Live RPC query | A named provider reported account, asset, balance, key, and nonce state at a named block. |
+| Redundant queries | Several selected providers returned the same observation. Agreement reduces provider error but is not consensus verification. |
+| Proof-checked state | The client verified relevant state proofs against authenticated headers under a specified profile. |
+| Light-client check | The client verified headers through a stated light-client design and checked state evidence. |
+| Full-node check | The verifier used its own execution and consensus clients. |
+| Claim | The coin authorized a typed `ClaimIntent`. A successful finalized execution transfers value; authorization alone does not. |
 
-The client should report the actual level used. "Online verified" is too vague if it hides reliance on one RPC endpoint.
+The client should report the checks performed and their sources. "Online verified"
+is too vague if it hides reliance on one RPC endpoint.
 
 ## Attributed status result
 
@@ -60,7 +63,10 @@ Hardware notice:  Caution from Lab A
 The detail view identifies Lab A, its signed notice, and freshness. Absence of a
 warning means only that the selected fresh subscriptions supplied none.
 
-No assurance level below claim should be presented as a guarantee that the physical object cannot be counterfeit. Online backing evidence can establish that an account is currently funded, but it still does not establish that the responding core is inside the shell. Claim is stronger because successful execution transfers the backing to the recipient's selected destination.
+No check guarantees that the physical object cannot be counterfeit. Online chain
+evidence can establish an account balance at a named block, but it does not place
+the responding core inside the shell. A successful claim transfers backing to the
+recipient's destination; authorization or submission alone does not.
 
 Ethereum's own documentation currently says known combined light-client implementations are not considered production-ready. The first register should therefore treat embedded light verification as experimental and preserve provider and full-node options.[^lightclients]
 
@@ -87,7 +93,12 @@ bslrr_root
 reader_nonce
 ```
 
-The verifier must label self-reported fields as hardware claims. `Proof-activated offline` means the core verified finalized exact funding when the slot activated and reports no later monetary authorization. It does not mean the verifier performed a current backing check. The client reserves `Backing observed now` for levels 3 through 7.
+The verifier must label self-reported fields as hardware claims.
+`Proof-activated offline` means the core reports that it verified funding evidence
+under its configured profile when the slot activated and has emitted no later
+monetary authorization. It does not mean the verifier performed a current chain
+check. `Backing observed now` is reserved for a check that obtains current chain
+state and reports its source and block.
 
 Architecture B may, in a later profile, replace disclosure of the raw response
 fields with a composite private presentation. If validated, that proof could bind
@@ -269,7 +280,8 @@ If a phone lacks part of the record but the coin root has advanced, the client s
 
 If two phones present chains ending at different roots, only the chain matching the current coin response is current. This does not prove the older chain was fraudulent; it may simply be stale.
 
-If the coin's optional history storage fails while its monetary state remains sound, a verifier may accept the coin at a lower assurance level.
+If the coin's optional history storage fails while monetary state remains sound,
+a verifier may accept the coin without BSLRR if its policy allows.
 
 ## References
 

@@ -20,13 +20,13 @@
 This RFC defines the current version 1 target for a batteryless physical bearer
 token representing one digital asset and exact amount at a time. Possession of an
 active object permits physical handoff without an account, application, network
-request, or onchain transfer. Recipients may progressively inspect the object,
-authenticate core-reported state, observe chain backing, or claim the represented
-value.
+request, or onchain transfer. Recipients may inspect the object, authenticate
+core-reported state, observe chain state, or claim the represented value. These
+actions answer different questions; they are not a single confidence scale.
 
 Version 1 uses Architecture A: a finite generate-on-advance secure-core lifecycle
-and one deployed immutable Ethereum smart account per active epoch. Architecture B
-is non-normative research and is not part of this profile.
+and deployed immutable Ethereum smart accounts. Architecture B is non-normative
+research and is not part of this profile.
 
 ## 1. Conventions and status
 
@@ -37,7 +37,7 @@ conforming implementation presently exists.
 This RFC is the canonical integrated version 1 profile. The sole canonical
 logical `ClaimIntent` field list remains in
 [Key lifecycle and claim protocol](../../docs/key-lifecycle.md#claim-semantics),
-which is incorporated by reference. This RFC deliberately does not duplicate it.
+which is incorporated by reference to prevent diverging copies.
 
 An accepted later D-* decision that explicitly says it supersedes this RFC takes
 temporary precedence until the RFC and
@@ -53,8 +53,10 @@ Version 1 covers:
 - optional local verification and online backing observation;
 - proof-activated loading of one exact represented asset and amount;
 - a finite generate-on-advance monetary-key lifecycle;
-- one deployed immutable smart account per active epoch;
-- exact destination-bound claim, rotation, and migration authorization;
+- deployed immutable smart accounts for active represented loads;
+- destination-bound `ClaimIntent` authorization;
+- one serialized lane for claim and other monetary operations, whose non-claim
+  authorization schemas remain unspecified;
 - optional local BSLRR continuity; and
 - open verifier software and advisory trust policies.
 
@@ -133,14 +135,20 @@ MUST leave exactly the prior `AWAITING_LOAD_PROOF` state or the fully committed
 
 ### 3.5 Account and represented asset
 
-Each active epoch MUST use one already deployed immutable Architecture A account
-whose runtime code and initial P-256 key binding are observable before funding.
+Each active represented load MUST use an already deployed immutable Architecture
+A account whose runtime code and initial P-256 key binding are observable before
+funding.
 The account MUST have no remote administrator capable of replacing validation,
 freezing bearer authority, or adding surveillance.
 
 Each epoch MUST bind one exact AssetID, represented amount, and residual
 beneficiary. Unexpected assets do not become bearer value. Version 1 MUST provide
 no arbitrary execution or unsolicited-token sweep path.
+
+The draft does not decide whether balance-preserving rotation creates a new key
+epoch while retaining the same account and represented load. Until the
+account/load/key-epoch relationship is specified, implementations cannot claim
+conformance for balance-preserving rotation.
 
 Claim execution MUST be one reverting, reentrancy-guarded transition that:
 
@@ -158,8 +166,12 @@ Any failed condition MUST revert every effect.
 ### 3.6 Monetary authorization
 
 Claim, rotation, migration, evacuation, and any future private-refresh operation
-MUST share one semantic nonce and one `AUTH_PENDING` lane. Before authorization
-bytes leave the core, it MUST durably commit the exact operation, digest,
+MUST share one semantic nonce and one `AUTH_PENDING` lane. The canonical
+`ClaimIntent` applies only to claim. Rotation, migration, and evacuation require
+typed, domain-separated authorizations, but their schemas are not selected.
+
+Before authorization bytes leave the core, it MUST durably commit the exact
+operation, digest,
 normalized signature, epoch, nonce, and signature profile. After interruption it
 MUST reproduce only those exact bytes without invoking the monetary key again.
 
@@ -168,10 +180,11 @@ beneficiary, quote, fee charged to the customer, basket, settlement, expiry, and
 execution term. Changing a bound term requires a new deliberate authorization.
 
 Version 1 also requires a separate typed `TransportAuthorization` binding the
-exact stable `intentDigest` to chain and fork domain, EntryPoint or direct relay,
-gas and fee caps, validity, paymaster terms, sponsor nonce, and loss allocation.
-Represented value MUST NOT be implicit gas authority. Caller- or paymaster-funded
-execution is the baseline.
+stable `intentDigest` to chain and fork domain, EntryPoint or direct relay, gas and
+fee caps, validity, paymaster terms, sponsor nonce, and an identifier or digest for
+the applicable fee-failure policy. Signing that policy identifier records the
+terms; it does not enforce legal loss allocation. Represented value MUST NOT be
+implicit gas authority. Caller- or paymaster-funded execution is the baseline.
 
 The exact transport schema and test vectors remain unfinished. The fork field
 does not by itself solve same-chain-ID split replay, particularly for pre-split
@@ -185,9 +198,16 @@ draft has no accepted general cancellation or invalidation protocol for an
 token or account freezes, or lost transport state may strand a funded coin.
 
 A conforming profile MUST NOT claim recoverability until a modeled protocol proves
-completion or a bounded safe terminal state without enabling a conflicting
-destination. Until then, version 1 defines exact retry only and MUST disclose the
-possibility of permanent stranding.
+completion or a terminal state with all of these properties:
+
+- the stored authorization is executable exactly once or provably unusable;
+- no conflicting authorization can execute;
+- the represented value has a defined disposition; and
+- clients can distinguish the terminal state from a retryable pending state.
+
+Whether permanent stranding is an acceptable terminal disposition remains a
+product decision. Until then, version 1 defines exact retry only and MUST disclose
+the possibility of permanent stranding.
 
 ### 3.8 Verification result
 
@@ -198,8 +218,9 @@ Verifier output MUST preserve three separately attributed dimensions:
 - `externalRiskStatus[]` from identified policy publishers.
 
 Clients MUST NOT collapse them into one `valid` bit. Fresh local attestation means
-an approved core answered the challenge; it MUST NOT be described as proof that
-the core is inside the physical shell. Verifier challenges MUST contain at least
+a core accepted under the verifier's selected hardware policy answered the
+challenge; it MUST NOT be described as proof that the core is inside the physical
+shell. Verifier challenges MUST contain at least
 128 unpredictable bits and follow the single-use, rollback-resistant behavior in
 the verification document.
 
@@ -214,6 +235,10 @@ approval state, one-way gate, center-button actuation, and signed receipt.
 The customer MUST have access to complete basket terms before the basket-commit
 control becomes available. Each claimed coin requires its own fresh physical
 authorization cycle even when the basket has one customer approval action.
+
+The protocol records approval plus secure gate crossing as the intended
+commercial acceptance event. Applicable agreements and law determine title,
+bailment, and loss allocation; this RFC does not determine them.
 
 ### 3.10 BSLRR
 
@@ -267,7 +292,7 @@ Version 1 excludes:
 - EIP-7702 accounts;
 - arbitrary account execution;
 - unsolicited-token sweeping;
-- implicit account-funded gas from represented ETH;
+- implicit account-funded gas from represented native value;
 - an unbounded renewable key lifecycle;
 - private refresh and production anonymous attestation;
 - Architecture B commitment-pool operation;
@@ -289,7 +314,8 @@ publishes and independently validates:
 5. immutable account contracts and adversarial asset/transport tests;
 6. same-chain-ID split policy and fork simulations;
 7. evaluated register consent, custody, accessibility, and mechanical behavior;
-8. complete-equipment electrical, thermal, RF, materials, and physical safety;
+8. electrical, thermal, RF, materials, mechanical, and fault testing of the
+   assembled coin and register;
 9. privacy threat models for local transport, network observers, and retained
    records; and
 10. independent cryptographic, hardware, contract, privacy, and human-factors
@@ -298,6 +324,9 @@ publishes and independently validates:
 The current complaint and evidence state is maintained in
 [Project status](../../STATUS.md). Passing one gate does not imply that another
 gate, or the complete system, is safe.
+
+The unresolved choices that block profile closure are listed in
+[Open product decisions](../../OPEN_DECISIONS.md).
 
 ## 7. Security considerations
 

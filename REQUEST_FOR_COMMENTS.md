@@ -4,35 +4,43 @@
 > This repository is an incomplete research specification, not an implementation
 > or security-reviewed product. Do not use it with mainnet or assets of value.
 
-Physical Bearer Cryptocurrency is a proposed physical cash form for digitally native assets. A coin carries one represented asset at a time, can circulate without recording every handoff, and can be checked with increasing levels of assurance ranging from physical inspection to immediate onchain claim.
+Physical Bearer Cryptocurrency is a proposed physical cash form for digitally
+native assets. A coin carries one represented asset at a time and can circulate
+without recording every handoff. Recipients can choose physical inspection, core
+authentication, chain observation, or claim. These checks provide different
+evidence; a successful claim transfers value but does not authenticate the shell.
 
-The first reference design is intentionally narrow:
+Version 1 is limited to:
 
 - batteryless NFC-powered hardware;
 - a universal reusable shell;
-- one represented asset per coin epoch;
-- one exact represented amount and load-bound residual beneficiary per epoch;
+- one represented asset per active load;
+- one represented amount and load-bound residual beneficiary per active load;
 - one supported chain per asset at launch, so the coin face shows asset and amount rather than chain;
-- Ethereum mainnet smart accounts controlled by P-256 hardware keys;
-- an initial policy set such as ETH, mainnet USDC, and mainnet WBTC;
-- a finite ordered slot series in which each slot reveals a fresh account only after the previous represented load is depleted;
+- an Ethereum-compatible execution model with smart accounts controlled by P-256
+  hardware keys;
+- valueless test assets modeling native, issuer-controlled, and wrapped/custodial
+  asset behavior; mainnet policies are future analysis only;
+- a finite ordered slot series that reveals a fresh account only after the previous
+  represented load is depleted; same-account balance-preserving rotation remains
+  an unresolved version 1 boundary;
 - proof-activated loading: a revealed slot remains inactive until the core verifies finalized exact-funding evidence;
 - open operation-specific passive-power profiles, with phones targeted for stateless verification and powered registers or home pads used for persistent mutation unless a phone meets the same measured limits;
 - two side buttons for verification and all three buttons for claim;
 - optional local BSLRR continuity records;
-- transparent key rotation first, with private refresh as a later compatible route;
+- transparent key rotation in version 1; private refresh remains future research,
+  with compatibility unestablished;
 - open verifier software and advisory trust feeds.
 
 This smart-account design is the **version 1 Architecture A baseline**. The RFC
 also tracks [Architecture B](./docs/architecture-b-commitment-pool.md) as a
-first-class research candidate: a shared reserve contract holds exact denominations,
+separate research candidate: a shared reserve contract would hold denominations,
 each physical coin controls one hidden Merkle commitment, and claim consumes the
-note with a one-time nullifier. A composite proof may establish approved hardware,
-fresh authorization, correct denomination, membership, and unspent status without
-revealing the exact core or note. Architecture B is not yet selected; it must beat
-Architecture A in a measured prototype and preserve destination-bound
-non-exportable authorization, interruption recovery, unilateral exit, and honest
-privacy disclosures before any later version can select it.
+note with a one-time nullifier. A future composite proof might establish that the
+hardware meets the verifier's selected policy, that authorization is fresh, and
+that a denomination is present and unspent without revealing the core or note.
+Architecture B is not selected. A later version would require it to pass its
+evaluation gates and compare favorably with Architecture A.
 
 Verifier output keeps the coin-signed core state, a sourced and
 finality-qualified chain observation, and each publisher's external risk opinion
@@ -65,13 +73,16 @@ merchant claim
   -> onchain transfer or account operation
 ```
 
-For the register profile, customer approval plus secure crossing of either the
-verification-only accept gate or claim gate transfers ownership to the merchant.
-Before crossing, the customer remains owner and the register is a bailee. A
-settlement provider assumes risk only through a signed acquisition acceptance;
-later provider or chain failure does not restore a customer payment obligation.
+For the register profile, the protocol records customer approval plus secure
+crossing of either the verification-only accept gate or claim gate as the intended
+commercial acceptance event. Applicable agreements and law determine title,
+bailment, and loss allocation. A settlement provider assumes only the obligations
+stated in its signed acquisition acceptance.
 
-Normal checkout trusts a narrow evaluated claim controller that owns the authoritative two-sided display, armed `ClaimIntent`, approval state, one-way gate, actuator sequence, and signed receipt. An open customer verifier may independently check the same digest, but phones are not required for ordinary checkout.
+Normal checkout trusts a narrow evaluated claim controller. It owns the
+authoritative two-sided display, armed `ClaimIntent`, approval state, one-way gate,
+actuator sequence, and signed receipt. A customer verifier may check the same
+digest independently, but ordinary checkout does not require a phone.
 
 The customer-facing basket-commit lever is the standard accessible initiation
 control. It remains unavailable until the terms are fixed and, for claims, online
@@ -107,19 +118,25 @@ basket.
 Offline checkout uses the verification-only accept path. A standard register
 does not begin all-three-button claim unless current chain checking, transaction
 submission, durable retry storage, and gas or sponsorship are ready. If the
-network disappears later, the register returns pre-gate customer property,
-retains post-gate active merchant property, or queues the exact captured pending
-authorization according to the stage reached.
+network disappears later, the reference operating model returns pre-gate coins,
+retains post-gate active coins under merchant treatment, or queues the captured
+pending authorization according to the stage reached.
 
-The proposal does not make continuously current backing finality appear from nowhere. A slot enters `ACTIVE` only after the core verifies a slot-bound proof of finalized exact funding, so later offline verification can establish that proof-activated state and the absence of a subsequent monetary authorization. Only a current chain check establishes newer chain state.
+A slot enters `ACTIVE` only after the core verifies a slot-bound proof under its
+configured finality profile. Later offline verification can authenticate that
+historical core state and the absence of a subsequent monetary authorization.
+Only a current chain observation reports newer chain state.
 
-Local attestation also does not prove that the responding core is physically inside the shell presented to the verifier. Fresh nonces stop replay of old responses, not live forwarding to a genuine coin elsewhere. Version 1 preserves offline acceptance, labels this limitation explicitly, measures relay resistance in the assembled prototype, and treats immediate claim as the strongest ordinary merchant response.
+Local attestation does not prove that the responding core is inside the presented
+shell. Fresh nonces stop replay of old responses, not live forwarding to a genuine
+coin elsewhere. Version 1 preserves offline acceptance, discloses this limit, and
+requires relay measurements on the assembled prototype. A successful claim
+transfers backing but still does not authenticate the shell.
 
-## Main architectural bet
+## Unproven hardware requirements
 
-Low denomination, deliberate physical activation, non-exportable keys, irreversible state evolution, optional online verification, and rapid merchant claim may together make classical physical bearer crypto practical even though each layer is imperfect.
-
-This depends on a hardware result that has not yet been demonstrated for this product:
+The design depends on two hardware properties that have not been demonstrated for
+this product:
 
 ```text
 no authorization leaves the core
@@ -131,7 +148,17 @@ no revealed monetary slot becomes ACTIVE
 unless finalized exact-funding evidence is verified and durably committed
 ```
 
-The candidate implementation uses one recoverable `AUTH_PENDING` lane shared by claim, rotation, migration, and future private refresh. The core creates the normalized signature once, atomically persists its exact bytes with the canonical intent digest, operation, epoch, shared semantic nonce, and pending state, and only then releases it. After power loss a caller resupplies the canonical intent; the core verifies its digest and returns the stored signature without invoking the monetary key again. The account rechecks and consumes the same semantic nonce during execution. Whether available secure hardware can enforce this commit-before-output ordering under fault injection remains a central prototype question.
+The current design has one retry-only `AUTH_PENDING` lane shared by monetary
+operations. It can reproduce a stored authorization after interruption, but it
+has no general recovery or cancellation protocol.
+
+The core creates a normalized signature once and atomically stores its bytes,
+digest, operation, epoch, shared semantic nonce, and pending state before releasing
+the signature. After power loss, a caller resupplies the canonical authorization;
+the core returns the stored signature only if the digest matches, without invoking
+the monetary key again. The account rechecks and consumes the same semantic nonce
+during execution. Whether available secure hardware can enforce this ordering
+under fault injection remains a prototype question.
 
 Onchain claim is one reverting transition. It enters an execution guard and
 consumes the semantic nonce before external interaction, requires strict transfer
@@ -243,12 +270,15 @@ authority.
 
 ## Current status
 
-The concept is internally developed but not implementation-ready. There is no
-hardware, contract, register, reference client, interoperability suite, or
-production evidence in this repository. Seven critical complaints remain open or
-partially addressed, including key-generation and signature-nonce safety,
-transport-fee authority, same-chain-ID fork replay, and `AUTH_PENDING` liveness.
-Architecture A is linkable by design; BSLRR is not anonymous or unlinkable; and
-Architecture B's privacy claims remain unproven.
+The documents define a draft profile, but the repository contains no hardware,
+contract, register, reference client, interoperability suite, or production
+evidence. Seven critical complaints remain open or partially addressed, including
+key-generation and signature-nonce safety, transport-fee authority,
+same-chain-ID fork replay, and `AUTH_PENDING` liveness. Architecture A is linkable
+by design; BSLRR is not anonymous or unlinkable; and Architecture B has no
+validated privacy construction.
 
-The first milestone should be a batteryless test device that performs valueless one-time authorization under repeated power cuts, followed by fault-injection review. Smart-account and register prototypes can proceed in parallel, but they cannot validate the physical security claim by themselves.
+The first milestone is a batteryless test device that performs valueless one-time
+authorization under repeated power cuts, followed by fault-injection review.
+Smart-account and register prototypes can proceed in parallel; neither validates
+the physical security claim.

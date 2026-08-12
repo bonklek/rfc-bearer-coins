@@ -54,7 +54,7 @@ old account or note
   -> new key epoch
 ```
 
-The design intentionally does not select a privacy protocol yet.
+No privacy protocol is selected.
 
 ## Minimum compatibility requirements
 

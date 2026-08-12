@@ -14,6 +14,7 @@ $requiredPublicEntries = @(
     'STATUS.md',
     'GLOSSARY.md',
     'FEEDBACK.md',
+    'OPEN_DECISIONS.md',
     'PUBLICATION.md',
     'DOCUMENT_AUTHORITY.md',
     'rfcs/README.md',

@@ -1,6 +1,6 @@
 # Architecture B: hardware-held shielded notes
 
-Architecture B is a first-class research candidate, not part of version 1. The
+Architecture B is a separate research candidate, not part of version 1. The
 version 1 baseline is Architecture A's per-coin Ethereum smart accounts. This
 candidate represents each funded physical
 coin as a hidden, one-use note in a shared onchain commitment pool.
@@ -94,7 +94,7 @@ The loader and prover receive no authority to create another destination-bound
 claim. The exact witness interface remains open: note material may not be exported
 merely because an external machine performs proving.
 
-Architecture B naturally favors fixed or common denominations. Unique amounts,
+Architecture B works best with fixed or common denominations. Unique amounts,
 isolated pools, unusual deposit timing, and prompt claim can collapse the practical
 anonymity set even when the proof is cryptographically zero knowledge.
 

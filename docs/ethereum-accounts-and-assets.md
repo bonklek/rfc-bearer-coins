@@ -1,10 +1,9 @@
 # Ethereum accounts and assets
 
-Ethereum mainnet is the first reference chain for specification analysis because a
-smart account can recognize secure-element-friendly P-256 signatures, rotate
-authorization without moving every asset, sponsor gas, and express a narrow
-migration policy. No implementation exists and mainnet use is prohibited at this
-stage.
+Ethereum is the reference execution model because a smart account can recognize
+secure-element-friendly P-256 signatures, rotate authorization, sponsor gas, and
+express a narrow migration policy. All prototypes use valueless test deployments.
+Mainnet contracts and asset policies are analyzed only as possible future cases.
 
 This document describes **Architecture A**, the version 1 per-coin smart-account
 baseline.
@@ -125,17 +124,19 @@ AssetID = (
 
 The ticker and display name are metadata, not identifiers.
 
-For the first generation, each supported asset maps to one Ethereum mainnet identity. The physical display may therefore show `ETH`, `USDC`, or `WBTC` without a chain label. Verifier clients must show the full identity and risk metadata.
+For the prototype, each supported test asset maps to one deployment identity.
+Every coin and verifier display must mark the environment `TESTNET / NO VALUE`.
+Future mainnet policy would require a separate decision and full identity and risk
+metadata.
 
-Register primary confirmation uses a different, deliberately concise rule: it
-shows the asset amount with the short approved chain name and recognizable chain
-icon, for example `USDC - Ethereum`. The icon is supplemental; the written chain
-name is required in visual and nonvisual presentation. Exact `chain_id`, contract
-address, and proxy or implementation records remain secondary technical details
-unless their current state generates a material warning under D-045.
+Register primary confirmation shows the test asset amount, test-network name, and
+`NO VALUE` warning. An icon is supplemental; the written network name is required
+in visual and nonvisual presentation. `chain_id`, contract address, and proxy or
+implementation records remain secondary technical details unless their state
+generates a material warning under D-045.
 
 Unexpected tokens can be sent to any account. They do not change the coin's
-represented amount or display. Version 1 deliberately provides no
+represented amount or display. Version 1 provides no
 unsolicited-token sweep path because executing attacker-selected token code would
 expand the attack surface. Clients may disclose such balances without treating
 them as bearer value.
@@ -192,7 +193,12 @@ An app, register vendor, or settlement provider may publish a signed policy cont
 - known transfer peculiarities;
 - policy version and expiry.
 
-There is no global protocol whitelist. For the first hardware profile, loaders and coin firmware should allow configuration only from an exact signed AssetID policy selected by that implementation or user; this is what prevents a spoof token from being labeled `USDC`. Another client may subscribe to a different policy. Managed settlement providers may apply narrower commercial policies.
+There is no global protocol whitelist. For the first hardware profile, loaders
+and coin firmware should allow configuration only from a signed AssetID policy
+selected by that implementation or user; this prevents an arbitrary contract
+from receiving a recognized display label. Another client may subscribe to a
+different policy. Managed settlement providers may apply narrower commercial
+policies.
 
 The policy also supplies the D-045 primary risk class and warning inputs. It must
 distinguish, at minimum, native, issuer-controlled, wrapped or custodian-dependent,
@@ -200,17 +206,24 @@ transfer-restricted or freezable, and upgradeable assets. A client may keep exac
 control addresses and implementation records in secondary details, but it must
 elevate a material current condition to the primary confirmation.
 
-### ETH
+### Native asset class
 
-ETH is the native asset and avoids token-contract issuer controls. It remains price-volatile and requires denomination or quote handling at checkout.
+A native test asset models value that avoids token-contract issuer controls. ETH
+is the corresponding future mainnet case; it remains price-volatile and requires
+denomination or quote handling at checkout.
 
-### USDC
+### Issuer-controlled token class
 
-USDC provides stable dollar denominations but inherits issuer, contract, reserve, freeze, and redemption-policy dependencies. The first policy should identify one exact Ethereum mainnet contract.
+A test token with pause, freeze, upgrade, and issuer controls models this class.
+USDC is a possible future mainnet case and adds issuer, contract, reserve, and
+redemption-policy dependencies. No live contract is selected for version 1.
 
-### WBTC
+### Wrapped or custodial token class
 
-WBTC allows the first Ethereum implementation to represent a Bitcoin-linked asset without implementing native Bitcoin keys and UTXOs. It is wrapped, custody-dependent, and not equivalent to native BTC. Current WBTC materials describe 1:1 backing and a multi-institutional custody structure.[^wbtc]
+A custodial test token models an asset whose claim depends on an external reserve.
+WBTC is a possible future mainnet case. It is wrapped, custody-dependent, and not
+equivalent to native BTC. Current WBTC materials describe 1:1 backing and a
+multi-institutional custody structure.[^wbtc]
 
 Clients must display those dependencies prominently.
 
@@ -220,7 +233,8 @@ The account validates the canonical coin-signed `ClaimIntent` defined only in
 [Key lifecycle and claim protocol](./key-lifecycle.md#claim-semantics), rather than
 accepting arbitrary calls or a destination-only signature. The onchain
 representation contains those complete typed fields or their canonically committed
-substructure hashes. This document intentionally does not duplicate the schema.
+substructure hashes. The field list is incorporated by reference to prevent
+diverging copies.
 
 The account checks:
 
@@ -277,15 +291,17 @@ Bundling does not make per-account validation or token transfer free. It amortiz
 
 ## Gas policy
 
-Version 1 never treats represented ETH as implicit gas authority. The baseline is
+Version 1 never treats represented native value as implicit gas authority. The baseline is
 caller- or paymaster-funded execution. Every replaceable submission uses the
 separate typed `TransportAuthorization` described in the key-lifecycle document,
 binding the inner intent digest, chain and fork domain, EntryPoint or direct relay,
-gas and fee caps, validity, paymaster terms, sponsor nonce, and loss allocation.
+gas and fee caps, validity, paymaster terms, sponsor nonce, and an identifier or
+digest for the applicable fee-failure policy. The signature records those terms;
+it does not enforce legal loss allocation.
 
 An independent holder may submit through a compatible bundler or direct relay by
 supplying gas outside the represented value. Any later account-funded mode must
-segregate an explicit gas reserve from represented ETH and obtain separately
+segregate an explicit gas reserve from represented value and obtain separately
 bounded authority; it is not part of version 1.
 
 ## Account deployment

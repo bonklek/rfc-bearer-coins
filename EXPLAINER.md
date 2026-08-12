@@ -11,7 +11,7 @@ value.
 The repository describes a target design. It does not contain working hardware,
 smart contracts, an application, or evidence that the security assumptions hold.
 
-## The five-step idea
+## Lifecycle overview
 
 1. **Load:** a coin reveals a fresh account and activation challenge. A loader
    funds that exact account on a valueless test network. The coin becomes active
@@ -39,12 +39,12 @@ flowchart LR
 
 ## What a recipient can learn
 
-The design deliberately separates three kinds of information:
+Verifier output separates three kinds of information:
 
 - `coreState`: what the secure core reports about its own lifecycle;
 - `observedChainState`: what a named chain source reports or proves now; and
-- `externalRiskStatus[]`: what selected policy publishers think about the
-  hardware, asset, or surrounding system.
+- `externalRiskStatus[]`: what policy publishers chosen by the recipient or
+  operator say about the hardware, asset, or surrounding system.
 
 For example, “core authenticated” does not prove the core is physically inside
 the shell being presented. “Funding proof accepted” does not prove the backing is
@@ -59,7 +59,7 @@ Version 1 uses **Architecture A**:
 - one batteryless NFC-powered physical coin;
 - a finite generate-on-advance monetary-key lifecycle;
 - no command or exceptional mode that exports a monetary private key;
-- one deployed immutable Ethereum smart account per active epoch;
+- deployed immutable Ethereum smart accounts for active represented loads;
 - one represented asset and exact amount per epoch;
 - optional physical handoff without network participation; and
 - exact, destination-bound claim authorization.
@@ -90,12 +90,13 @@ remain open or partially addressed. The principal blockers include:
 - live relay authenticating the wrong physical object;
 - incomplete canonical encoding and test vectors;
 - register consent and monetary-operation serialization;
-- fees consuming represented ETH;
+- transport fees consuming represented native value;
 - reset-unsafe ECDSA signing;
 - unprofiled long-lived key entropy;
 - permanently stranded `AUTH_PENDING` coins;
 - same-chain-ID fork replay; and
-- unproven passive proof verification and complete-equipment safety.
+- unproven passive proof verification and assembled-device electrical, RF,
+  thermal, materials, mechanical, and fault safety.
 
 The [project status](./STATUS.md) is the authoritative maturity summary.
 

@@ -136,7 +136,8 @@ The coin does not observe the chain continuously. During loading, however, it ac
 
 ### Attestation key
 
-The attestation key identifies an approved core or approved hardware class and signs statements about:
+The attestation key identifies a core or hardware class that a verifier may
+accept under its selected hardware policy. It signs statements about:
 
 - firmware or secure-application profile;
 - current key epoch;
@@ -272,7 +273,7 @@ transition.
 ### Selected version 1 finite profile
 
 A finite core contains an irreversible maximum epoch count and storage for the
-current monetary key. It does not intentionally contain future monetary keys.
+current monetary key. It contains no future monetary keys.
 After finalized depletion retires the current epoch, its internal entropy source
 generates the next key and one crash-consistent transaction installs that key,
 advances the epoch, and makes the old key inaccessible. The public key is released

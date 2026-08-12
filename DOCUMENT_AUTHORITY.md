@@ -21,9 +21,9 @@ When two passages conflict, apply this order:
 7. The append-only complaint log and research logs as rationale and evidence,
    not current specification.
 
-RFC-0001 is deliberately incomplete. Its authority identifies the selected
-version 1 target; it does not make missing encodings, implementations, tests, or
-evidence exist, and no implementation can currently claim conformance.
+RFC-0001 identifies the selected version 1 profile. Conformance remains
+unavailable until its required encodings, implementations, tests, and evidence
+exist.
 
 An accepted decision does not resolve its complaint. Complaint state changes only
 when the required specification, implementation, test, evidence, policy, or

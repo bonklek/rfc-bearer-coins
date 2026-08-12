@@ -6,11 +6,11 @@ research candidate. Both are unimplemented.
 ```mermaid
 flowchart TB
     Coin["Batteryless physical coin<br/>finite secure-core lifecycle"]
-    Intent["Exact destination-bound authorization<br/>no private-key export path"]
-    Coin --> Intent
+    Concept["Physical authorization concept<br/>no private-key export path"]
+    Coin --> Concept
 
-    Intent --> AKey
-    Intent --> BNote
+    Concept --> AKey
+    Concept --> BNote
 
     subgraph A["Architecture A — version 1 baseline"]
         AKey["Current P-256 monetary key"] --> Account["One deployed immutable<br/>smart account per epoch"]
@@ -19,7 +19,7 @@ flowchart TB
     end
 
     subgraph B["Architecture B — research candidate"]
-        BNote["Hidden note authority"] --> Commitment["Commitment in shared pool"]
+        BNote["Authorization and proof schema<br/>not selected"] --> Commitment["Proposed commitment in shared pool"]
         Commitment --> AssetB["Fixed denomination<br/>in shared reserve"]
         Commitment --> ClaimB["Private proof plus<br/>one-time nullifier"]
     end

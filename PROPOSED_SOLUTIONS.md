@@ -13,7 +13,7 @@ solution programs and then maps every complaint to a concrete disposition.
 
 | Decision | Topic | Status | Accepted design | Complaints |
 |---|---|---|---|---|
-| D-001 | Local verification and relay | Accepted | Local attestation authenticates a responding approved core, not its physical co-location. Offline transfer remains unrestricted; stronger checks are optional and recipient-selected. Relay resistance is a measured hardware gate, and immediate claim is the strongest ordinary merchant response. | C-001 |
+| D-001 | Local verification and relay | Accepted | Local attestation authenticates a core accepted under the verifier's hardware policy, not its physical co-location. Offline transfer remains unrestricted; complementary checks are optional and recipient-selected. Relay resistance is a measured hardware gate. A successful claim transfers backing but does not authenticate the shell. | C-001 |
 | D-002 | Complete claim authorization | Accepted | One canonical versioned `ClaimIntent` binds every material monetary, merchant, quote, fee, expiry, basket, settlement, and execution term. The same digest identifies the coin authorization, account call, display record, receipt, and settlement record. This changes no customer interaction. | C-002 |
 | D-003 | Register consent boundary | Accepted | Normal checkout trusts a narrow evaluated claim controller that owns the authoritative two-sided display, exact `ClaimIntent`, customer approval state, one-way gate, fresh center-button transition, actuator, and receipt. A customer phone may verify the same digest independently but is never required. Buttons prove deliberate claim activation under this register trust assumption, not what an arbitrary display showed. | C-003 |
 | D-004 | Global monetary serialization | Accepted | Claim, key rotation, account migration, and future private refresh share one core `AUTH_PENDING` lane and one account `semanticNonce`. Once an exact authorization is pending, the core may reproduce only that authorization; the account rechecks and consumes the nonce during execution before effects. This changes no normal interaction. | C-004 |
@@ -25,11 +25,11 @@ solution programs and then maps every complaint to a concrete disposition.
 | D-010 | Atomic onchain claim execution | Accepted | Claim is one reverting account execution. It rechecks intent, epoch, status, and semantic nonce; enters an execution guard and consumes the nonce before external interaction; enforces strict transfer success and exact balance deltas; sends the represented amount and all same-asset surplus to their bound destinations; requires zero ending represented-asset balance; retires authority; and emits completion. Any failure reverts every effect. The coin advances only after finalized proof of zero balance and retired authority. | C-010 |
 | D-011 | Operation-specific passive-power profiles | Accepted | Every operation has a measured harvested-energy, coupling, reservoir, brownout, timing, retry, duty-cycle, and thermal envelope. Ordinary stateless verification targets compatible phones. Persistent continuity writes and every monetary mutation use an open powered-reader profile unless a phone independently meets the same measured limits. The coin measures actual power conditions and refuses before mutation when margins are insufficient; reader branding or central permission is irrelevant. Interruption safety remains mandatory at every power level. | C-011 |
 | D-014 | Evidence-first tamper response | Accepted | A confirmed tamper event irreversibly changes the consumer core to `TAMPER_SUSPECTED`, prevents it from reporting `ACTIVE` or accepting another load, and permits only one exact all-three-button evacuation authorization through the shared pending lane. Finalized zero-out evidence permanently retires the core rather than advancing it. Automatic monetary-key destruction is excluded from the ordinary profile; a separately labeled destructive profile requires explicit bearer-loss acceptance or a recovery authority configured before funding. | C-014 |
-| D-037 | Physical acceptance and risk boundary | Accepted | Before customer approval and secure gate crossing, the customer owns each coin and the register operator is a bailee obligated to return that same coin. Approval plus crossing either the verification-only accept gate or the claim gate transfers ownership and ordinary coin risk to the merchant. Later claim, submission, freeze, reorganization, and counterfeit risk remain with the merchant until a provider issues a signed acquisition acceptance for the canonical settlement identity; risk then follows that provider's bound terms. Equipment failure is borne by the actor controlling custody. Fraud remedies are legal, not protocol clawbacks. | C-037 |
-| D-038 | Multi-coin basket completion | Accepted | All selected coins bind one canonical basket and cross a secure gate individually. The sale completes only after every selected crossing is recorded. If routing stops early, crossed coins belong to the merchant and the merchant owes the basket's exact precommitted partial-acceptance remedy; uncrossed coins remain customer property. A complete same-chain authorization set may execute through one reverting `BasketClaim`. Pending coins are never returned as ordinary active tender. | C-038 |
+| D-037 | Physical acceptance and risk boundary | Accepted | The protocol records customer approval plus secure gate crossing as the intended commercial acceptance event. The reference operating model treats the coin as customer property before that event and merchant property afterward. Provider obligations begin only with signed acquisition acceptance. Applicable agreements and law determine title, bailment, and loss allocation; the protocol creates no legal clawback. | C-037 |
+| D-038 | Multi-coin basket completion | Accepted | All selected coins bind one canonical basket and cross a secure gate individually. The sale record completes only after every selected crossing is recorded. If routing stops early, the reference operating model treats crossed coins as merchant property and uncrossed coins as customer property, with the basket's precommitted partial-acceptance remedy. A complete same-chain authorization set may execute through one reverting `BasketClaim`. Pending coins are never returned as ordinary active tender. | C-038 |
 | D-039 | Locked quote and change terms | Accepted | The quote source depends on the merchant's commercial relationship: an independent merchant may select its source, while an issuer or settlement provider may require a source and spread for use of its service. No source is protocol-wide. Exact integer arithmetic, source, rates, spread, customer fees, rounding, selected coins, change method, and remedies are displayed and bound before approval. Quote expiry prevents late approval but never reprices an approved basket. Excess coins return before approval; remaining change becomes an exact signed merchant obligation after acceptance. | C-039 |
-| D-040 | Online precondition for register claim | Accepted | A standard register never initiates the all-three-button claim sequence without a fresh chain check, a working submission path, durable authorization storage, and available gas or sponsorship. Offline checkout uses verification-only acceptance and leaves the coin active. If connectivity fails after initiation, pre-gate coins return, post-gate pre-authorization coins remain active merchant property, and captured authorizations remain merchant-owned `AUTH_PENDING` records queued for exact retry. Provider credit still requires signed acceptance. | C-040 |
-| D-044 | Customer basket-commit lever | Accepted | A customer-controlled physical lever is the standard accessible basket-commit action. It remains unavailable until the basket terms are fixed and, for any claim route, D-040's online preconditions pass. One pull locks the approved basket and permits exactly one distinct center press-and-release cycle for each approved claim coin while the secure mechanism applies the side-button state. It cannot hold center continuously, alter terms, add coins, or exceed the approved count; it disarms on completion, cancellation, or failure. Verification-only coins receive no center stroke. The authoritative terms remain available visually and nonvisually, and ownership still transfers at each secure gate crossing. | C-044 |
+| D-040 | Online precondition for register claim | Accepted | A standard register never initiates the all-three-button claim sequence without a fresh chain check, a working submission path, durable authorization storage, and available gas or sponsorship. Offline checkout uses verification-only acceptance and leaves the coin active. If connectivity fails after initiation, pre-gate coins return; the reference operating model treats post-gate coins and captured `AUTH_PENDING` records as merchant property queued for exact retry. Provider credit still requires signed acceptance. | C-040 |
+| D-044 | Customer basket-commit lever | Accepted | A customer-controlled physical lever is the standard accessible basket-commit action. It remains unavailable until the basket terms are fixed and, for any claim route, D-040's online preconditions pass. One pull locks the approved basket and permits exactly one distinct center press-and-release cycle for each approved claim coin while the secure mechanism applies the side-button state. It cannot hold center continuously, alter terms, add coins, or exceed the approved count; it disarms on completion, cancellation, or failure. Verification-only coins receive no center stroke. The authoritative terms remain available visually and nonvisually, and each secure gate crossing records an intended commercial acceptance event. | C-044 |
 | D-045 | Risk-first confirmation hierarchy | Accepted | The primary visual and audio confirmation shows purchase total, merchant, tender and change, the selected action, customer fees, and each asset's amount with a short approved-chain name and recognizable chain icon. It elevates concrete material warnings about backing, settlement, custody, freezability, and upgradeability. Exact chain IDs, contract addresses, proxy and implementation data, and other technical metadata remain in secondary details unless they generate a material warning. The written chain name accompanies every icon and is included in nonvisual output. | C-045 |
 
 ## Non-negotiable product invariants
@@ -44,10 +44,9 @@ preferences:
 2. **Offline acceptance remains possible.** A recipient may accept physical and
    local cryptographic evidence without checking a chain. The interface must say
    what was and was not established, but must not prohibit the transfer.
-3. **Assurance is progressive and recipient-selected.** Physical inspection,
-   local attestation, optional BSLRR continuity, online backing verification, and
-   immediate claim are increasing assurance levels. None is a protocol-wide
-   permission gate.
+3. **Checks are complementary and recipient-selected.** Physical inspection,
+   local attestation, optional BSLRR continuity, chain observation, and claim
+   answer different questions. None is a protocol-wide permission gate.
 4. **Verification does not spend.** Two side buttons enable verification. All
    three buttons are required for a monetary authorization. A normal handoff
    never creates an onchain transaction.
@@ -71,9 +70,9 @@ preferences:
     feeds, account code, and conformance tests are public. Commercial services
     compete above the bearer protocol.
 
-These invariants deliberately retain cash-like residual risk. A receiver may
-accept a coin on less evidence than a professional merchant. That is a feature of
-bearer transfer, provided the assurance level is stated accurately.
+These invariants retain cash-like residual risk. A receiver may perform different
+checks from a professional merchant. The interface must report which checks were
+performed and what each established.
 
 ## Resolution states
 
@@ -117,8 +116,8 @@ itself, prove that the core is inside the shell being inspected. Version 1:
 - keeps purely offline acceptance available for cash-like risk decisions.
 
 Distance bounding may become a later hardware profile if it can fit the passive
-power and cost envelope. Immediate claim remains the strongest ordinary merchant
-response because it transfers the backing rather than predicting future behavior.
+power and cost envelope. A successful claim transfers backing rather than
+predicting future behavior, but it does not authenticate the shell.
 
 ### Advisory policy
 
@@ -390,9 +389,10 @@ The display is human-readable evidence, not proof of backing. Its controller:
 - is inspected optically during verification and by register cameras where used;
 - cannot defeat an overlay, so apps and registers compare visible and signed state.
 
-At launch, one chain per asset lets the face show `USDC 20` rather than a chain
-name. The cryptographic asset-policy identifier remains exact, and clients show
-mainnet, contract, upgradeability, freeze, custody, and wrapped status.
+For prototypes, one test deployment per asset lets the face use a short test-asset
+label. Every public display also states `TESTNET / NO VALUE`. The cryptographic
+asset-policy identifier remains specific, and clients show network, contract,
+upgradeability, freeze, custody, and wrapped status.
 
 ### Tamper and refurbishment
 
@@ -491,7 +491,7 @@ blacklisted, upgraded, or unknown implementations reduce the observation to
 
 ### Chain verification
 
-Assurance levels are explicit:
+Chain-observation methods are identified:
 
 - one RPC observation;
 - redundant RPC observation;
@@ -507,7 +507,8 @@ factory-liveness and absent-code problems.
 The represented asset never pays gas implicitly. A caller or paymaster funds
 execution. A typed transport authorization binds chain/fork domain, EntryPoint,
 inner intent digest, gas and fee caps, validity bounds, paymaster, and sponsor
-nonce. Direct caller-paid execution remains available if ERC-4337 infrastructure
+nonce, plus an identifier or digest for the applicable fee-failure policy. Direct
+caller-paid execution remains available if ERC-4337 infrastructure
 fails. Launch requires measured gas ceilings as a fraction of denomination.
 
 **Primary complaints:** C-007, C-010, C-020 through C-026, C-061, C-064 through
@@ -521,12 +522,15 @@ The sole canonical logical `ClaimIntent` schema is in
 [Key lifecycle and claim protocol](./docs/key-lifecycle.md#claim-semantics).
 Every material customer-visible monetary, merchant, quote, fee, basket,
 settlement, execution, and refund term is included directly or by canonical
-substructure hash. This document intentionally does not repeat the field list.
+substructure hash. The field list is incorporated by reference to prevent
+diverging copies.
 
 Replaceable delivery authority is not part of the inner claim intent. A separate
-typed `TransportAuthorization` binds the exact `intentDigest`, chain and fork
-domain, EntryPoint or direct relay, gas and fee caps, validity, paymaster terms,
-sponsor nonce, and loss allocation. Represented value never pays gas implicitly.
+typed `TransportAuthorization` binds the `intentDigest`, chain and fork domain,
+EntryPoint or direct relay, gas and fee caps, validity, paymaster terms, sponsor
+nonce, and a fee-failure policy identifier or digest. Signing it records the terms
+but does not enforce legal loss allocation. Represented value never pays gas
+implicitly.
 
 The coin signs this intent. The secure register display renders the same decoded
 record. The register and customer receive pre-claim and post-claim receipts keyed
@@ -602,45 +606,41 @@ available gas or sponsorship. Without these conditions it offers only the
 verification-only accept and recirculate path.
 
 Connectivity can still fail after initiation. Failure handling follows the last
-durable boundary: return before gate crossing; retain an `ACTIVE` merchant-owned
-coin after crossing but before authorization; persist and queue the exact
+durable boundary: return before gate crossing; under the reference operating
+model, retain an `ACTIVE` coin as merchant property after crossing but before
+authorization; persist and queue the exact
 `AUTH_PENDING` authorization after capture; and reconcile chain state before
 replaying only that identical authorization after an uncertain submission. A
 provider owes no credit without its separate signed acceptance.
 
-### Custody and ownership boundary
+### Commercial acceptance boundary
 
-The register uses one cash-like rule:
-
-```text
-customer approval + secure acceptance-gate crossing = merchant ownership
-```
-
-Before that event, the customer remains owner and the register operator is a
-bailee obligated to return the same coin on rejection, cancellation, or failure.
-After that event, the merchant owns the coin or its pending authorization and
-bears ordinary backing, counterfeit, submission, freeze, and reorganization risk.
-The boundary is the same for the verification-only accept path and the exceptional
-claim path; claim does not make the customer finance the merchant's chosen
-settlement operation.
+The protocol records one event:
 
 ```text
-input, verification, waiting      customer owner; register bailee
-approved but gate not crossed     customer owner; register bailee
-return gate                       customer retains ownership
-accept gate crossed               merchant owns active recirculating coin
-claim gate crossed                merchant owns coin and subsequent claim risk
-post-gate jam or failure          merchant-owned property is quarantined
-provider signed acceptance        provider assumes only its bound acquisition risk
-provider payout failure           provider obligation under settlement terms
+customer approval + secure acceptance-gate crossing = intended commercial acceptance
 ```
 
-A settlement provider assumes risk only through a signed `ProviderAcceptance`
+The reference operating model treats the coin as customer property before that
+event and merchant property afterward. The same model applies to the
+verification-only accept path and the claim path. Applicable agreements and law
+determine title, bailment, and loss allocation.
+
+```text
+input, verification, waiting      treat as customer property
+approved but gate not crossed     treat as customer property
+return gate                       no acceptance event recorded
+accept gate crossed               treat active coin as merchant property
+claim gate crossed                treat coin and pending claim as merchant property
+post-gate jam or failure          quarantine under merchant treatment
+provider signed acceptance        apply the provider's bound terms
+provider payout failure           follow the signed settlement terms
+```
+
+A settlement provider records its obligations through a signed `ProviderAcceptance`
 bound to the provider-wide `settlementId`, merchant beneficiary, payout terms,
-fees, expiry, and accepted status. Until then the merchant owns the claim. An
-equipment operator bears loss caused while it controls custody under its merchant
-or operator agreement. Intentional fraud may create legal recourse, but the bearer
-protocol supplies no customer clawback after accepted gate crossing.
+fees, expiry, and accepted status. The signature does not itself enforce those
+terms or create legal recourse.
 
 ### Settlement identity
 
@@ -709,8 +709,9 @@ follow the accept path without a center stroke.
 The mechanism cannot change basket terms, admit an unselected coin, or produce
 more strokes than the approved claim count. Completion, cancellation, loss of a
 required precondition, object-tracking failure, or any mechanical fault disarms
-the sequence. Gate crossing remains the per-coin ownership boundary, so D-037 and
-D-038 continue to govern partial routing and remedies.
+the sequence. Gate crossing remains the per-coin protocol acceptance event, so
+D-037 and D-038 continue to govern the reference partial-routing record and
+remedies.
 
 ### Complete-equipment qualification
 
@@ -922,14 +923,15 @@ fiat payout, certification, operator identity, privacy services, and data retent
 to jurisdiction-specific analysis. These gates apply to optional commercial actors,
 not physical transfer itself.
 
-### Evidence ladder
+### Evidence stages
 
 1. **Protocol models:** state-machine and smart-contract invariants with valueless
    assets.
 2. **Hardware test rigs:** power interruption, fault injection, side channel,
    entropy, relay, display, and lifecycle testing.
-3. **Adversarial-value trial:** enough real value and bounty to create attack
-   incentives, with bounded participants and exposure.
+3. **Future adversarial-value trial:** only after every no-value gate closes and
+   an explicit release decision defines bounded participants, exposure, and
+   incentives.
 4. **Circulation trial:** repeated handoff and merchant recirculation, not only
    loading and redemption.
 5. **Commercial pilot:** ordinary users, support burden, fraud loss, comprehension,
@@ -1052,9 +1054,11 @@ claim-at-every-handoff system. It is:
 - batteryless universal coins;
 - physical offline handoff without protocol participation;
 - two-side-button optional local verification;
-- one Ethereum mainnet asset policy per displayed asset;
-- one deployed immutable account and exact represented amount per coin epoch;
-- proof-activated finite slots with a fresh account and challenge per epoch;
+- an Ethereum-compatible execution model using valueless test deployments;
+- deployed immutable accounts for active represented loads; the account/key-epoch
+  relationship during balance-preserving rotation remains to be specified;
+- proof-activated finite slots with a fresh account and challenge after each
+  depleted load cycle;
 - P-256 non-exportable monetary keys under one serialized state machine;
 - all-three-button typed claim authorization;
 - transparent rotation and migration;
@@ -1097,7 +1101,8 @@ requires one or more of:
 - a model-checked state or contract invariant;
 - implementation and adversarial tests;
 - measured hardware evidence under a defined attacker and mission profile;
-- complete-equipment safety and conformance evidence;
+- electrical, RF, thermal, materials, mechanical, and fault testing of the
+  assembled coin and register;
 - an operating, custody, legal, or economic policy with accountable ownership;
 - an explicit accepted-risk decision that preserves offline bearer behavior and
   accurately describes the remaining exposure.

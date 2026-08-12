@@ -1,10 +1,14 @@
 # Open questions
 
-These questions are intentionally unresolved. Accepted version 1 choices are
+The questions below are unresolved. Accepted version 1 choices are
 recorded in [Document authority](../DOCUMENT_AUTHORITY.md) and are not repeated
 here as open product choices. Remaining questions separate hardware feasibility,
-protocol design, and commercial validation so a promising answer in one layer is
+protocol design, and commercial validation so a positive result in one layer is
 not mistaken for proof of the others.
+
+Questions that require an explicit product choice rather than research or
+implementation evidence are collected in
+[Open product decisions](../OPEN_DECISIONS.md).
 
 ## Related docs
 
@@ -70,7 +74,8 @@ not mistaken for proof of the others.
 ## Ethereum account questions
 
 - What is the minimal immutable account interface?
-- Which exact safe-call, balance-delta, execution-guard, and event profile implements D-010 for native ETH and each approved ERC-20 policy?
+- Which safe-call, balance-delta, execution-guard, and event profile implements
+  D-010 for a native test asset and each approved test-token behavior class?
 - Does it use ERC-4337 as the primary execution path, an account-native intent relayer, or both?
 - How is P-256 key representation normalized and validated?
 - What evidence would be required before a later profile could admit
@@ -78,9 +83,11 @@ not mistaken for proof of the others.
 - Which exact balance-delta and transfer-return profile enforces the accepted represented-amount, surplus-routing, zero-balance claim across each supported asset?
 - How should the system handle a residual beneficiary that becomes transfer-restricted without allowing surplus to strand the represented claim indefinitely?
 - How are fee-on-transfer, pausable, rebasing, or otherwise unusual tokens excluded?
-- How should clients disclose unsupported tokens that version 1 intentionally
+- How should clients disclose unsupported tokens that version 1
   cannot sweep?
-- Which exact Ethereum mainnet USDC and WBTC policy entries launch first, and how are proxy upgrades tracked?
+- Which valueless test assets reproduce native, issuer-controlled, and
+  wrapped/custodial behavior well enough for conformance testing? Mainnet policy
+  selection is future work.
 
 ## Verification questions
 
