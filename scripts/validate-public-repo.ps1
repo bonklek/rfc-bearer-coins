@@ -3,7 +3,9 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $errors = New-Object System.Collections.Generic.List[string]
 
-$publicFiles = Get-ChildItem -LiteralPath $repoRoot -Recurse -File | Where-Object {
+# -Force: PowerShell on macOS/Linux treats dot-prefixed items as hidden, which
+# would otherwise skip .github/ and other published dotfiles.
+$publicFiles = Get-ChildItem -LiteralPath $repoRoot -Recurse -File -Force | Where-Object {
     $_.FullName -notmatch '[\\/]\.git[\\/]' -and
     $_.FullName -notmatch '[\\/]validation-output[\\/]'
 }
@@ -49,6 +51,20 @@ foreach ($file in $contentFiles) {
 
 $markdownFiles = $publicFiles | Where-Object { $_.Extension -eq '.md' }
 $anchorCache = @{}
+$repoPrefix = $repoRoot.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+
+# GitHub resolves links case-sensitively; Windows and macOS file systems
+# usually do not, so Test-Path alone accepts links that 404 once published.
+function Test-ExactCasePath([string]$path) {
+    $current = $repoRoot
+    $parts = $path.Substring($repoPrefix.Length).Split([char[]]@('\', '/'), [StringSplitOptions]::RemoveEmptyEntries)
+    foreach ($part in $parts) {
+        $match = Get-ChildItem -LiteralPath $current -Force | Where-Object { $_.Name -ceq $part }
+        if (-not $match) { return $false }
+        $current = $match.FullName
+    }
+    return $true
+}
 
 function Get-MarkdownAnchors([string]$path) {
     if ($anchorCache.ContainsKey($path)) { return $anchorCache[$path] }
@@ -58,8 +74,10 @@ function Get-MarkdownAnchors([string]$path) {
     foreach ($heading in [regex]::Matches($text, '(?m)^#{1,6}\s+(.+?)\s*#*\s*$')) {
         $slug = $heading.Groups[1].Value.ToLowerInvariant()
         $slug = [regex]::Replace($slug, '<[^>]+>', '')
-        $slug = [regex]::Replace($slug, '[^\p{L}\p{Nd}\s_-]', '')
-        $slug = [regex]::Replace($slug.Trim(), '\s+', '-')
+        # GitHub: drop everything except word characters, hyphens and spaces,
+        # then map each space to one hyphen (runs of spaces are not collapsed).
+        $slug = [regex]::Replace($slug, '[^\p{L}\p{M}\p{Nd}\p{Pc} -]', '')
+        $slug = $slug.Replace(' ', '-')
         if ($seen.ContainsKey($slug)) {
             $seen[$slug]++
             $slug = "$slug-$($seen[$slug])"
@@ -82,8 +100,12 @@ foreach ($file in $markdownFiles) {
         if ([string]::IsNullOrWhiteSpace($pathPart)) { continue }
         $pathPart = [Uri]::UnescapeDataString($pathPart)
         $resolved = [IO.Path]::GetFullPath((Join-Path $file.DirectoryName $pathPart))
-        if (-not (Test-Path -LiteralPath $resolved)) {
-            $relative = $file.FullName.Substring($repoRoot.Length + 1)
+        $relative = $file.FullName.Substring($repoRoot.Length + 1)
+        if ($resolved -ne $repoRoot -and -not $resolved.StartsWith($repoPrefix, [StringComparison]::Ordinal)) {
+            $errors.Add("Local link leaves the repository in ${relative}: $target")
+            continue
+        }
+        if (-not (Test-Path -LiteralPath $resolved) -or -not (Test-ExactCasePath $resolved)) {
             $errors.Add("Broken local link in ${relative}: $target")
             continue
         }
@@ -91,7 +113,6 @@ foreach ($file in $markdownFiles) {
             $fragment = [Uri]::UnescapeDataString(($target -split '#', 2)[1]).ToLowerInvariant()
             $anchors = Get-MarkdownAnchors $resolved
             if (-not $anchors.Contains($fragment)) {
-                $relative = $file.FullName.Substring($repoRoot.Length + 1)
                 $errors.Add("Broken heading anchor in ${relative}: $target")
             }
         }
@@ -142,8 +163,10 @@ if (Test-Path -LiteralPath (Join-Path $repoRoot 'review-queue')) {
 }
 
 $issueFormRoot = Join-Path $repoRoot '.github/ISSUE_TEMPLATE'
-foreach ($form in Get-ChildItem -LiteralPath $issueFormRoot -Filter '*.yml' -File) {
-    if ($form.Name -eq 'config.yml') { continue }
+# GitHub accepts both .yml and .yaml issue forms.
+$issueForms = Get-ChildItem -LiteralPath $issueFormRoot -File | Where-Object { $_.Extension -in '.yml', '.yaml' }
+foreach ($form in $issueForms) {
+    if ($form.BaseName -eq 'config') { continue }
     $formText = Get-Content -LiteralPath $form.FullName -Raw -Encoding UTF8
     foreach ($requiredKey in @('name', 'description', 'body')) {
         if ($formText -notmatch "(?m)^${requiredKey}:") {
