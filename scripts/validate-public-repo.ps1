@@ -66,13 +66,45 @@ function Test-ExactCasePath([string]$path) {
     return $true
 }
 
+# Blank every line of a fenced code block (``` or ~~~) so headings and links
+# shown as code are not parsed. A fence closes only on the same character with
+# at least the opening length; an unclosed fence runs to the end of the file.
+function Remove-FencedCodeBlocks([string]$text) {
+    $lines = $text -split "`r?`n"
+    $fence = $null
+    for ($i = 0; $i -lt $lines.Length; $i++) {
+        $line = $lines[$i]
+        if ($null -eq $fence) {
+            $open = [regex]::Match($line, '^\s*(`{3,}|~{3,})')
+            if (-not $open.Success) { continue }
+            $marker = $open.Groups[1].Value
+            # A backtick fence's info string cannot contain a backtick.
+            if ($marker[0] -eq [char]'`' -and $line.Substring($open.Length).Contains('`')) { continue }
+            $fence = $marker
+            $lines[$i] = ''
+        } else {
+            $lines[$i] = ''
+            $close = [regex]::Match($line, '^\s*(`{3,}|~{3,})\s*$')
+            if ($close.Success) {
+                $closer = $close.Groups[1].Value
+                if ($closer[0] -eq $fence[0] -and $closer.Length -ge $fence.Length) {
+                    $fence = $null
+                }
+            }
+        }
+    }
+    return ($lines -join "`n")
+}
+
 function Get-MarkdownAnchors([string]$path) {
     if ($anchorCache.ContainsKey($path)) { return $anchorCache[$path] }
     $anchors = New-Object 'System.Collections.Generic.HashSet[string]'
     $seen = @{}
-    $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
+    $text = Remove-FencedCodeBlocks (Get-Content -LiteralPath $path -Raw -Encoding UTF8)
     foreach ($heading in [regex]::Matches($text, '(?m)^#{1,6}\s+(.+?)\s*#*\s*$')) {
         $slug = $heading.Groups[1].Value.ToLowerInvariant()
+        # GitHub slugs the rendered text, so [text](target) contributes only text.
+        $slug = [regex]::Replace($slug, '(?<!!)\[([^\]]*)\]\([^)]*\)', '$1')
         $slug = [regex]::Replace($slug, '<[^>]+>', '')
         # GitHub: drop everything except word characters, hyphens and spaces,
         # then map each space to one hyphen (runs of spaces are not collapsed).
@@ -91,10 +123,12 @@ function Get-MarkdownAnchors([string]$path) {
 }
 
 foreach ($file in $markdownFiles) {
-    $text = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
+    $text = Remove-FencedCodeBlocks (Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8)
     $links = [regex]::Matches($text, '\[[^\]]+\]\(([^)]+)\)')
     foreach ($link in $links) {
-        $target = $link.Groups[1].Value.Trim('<', '>')
+        # Drop an optional link title: [x](a.md "t") or [x](a.md 't').
+        $target = [regex]::Replace($link.Groups[1].Value.Trim(), '\s+("[^"]*"|''[^'']*'')$', '')
+        $target = $target.Trim('<', '>')
         if ($target -match '^(https?://|mailto:|#)') { continue }
         $pathPart = ($target -split '#', 2)[0]
         if ([string]::IsNullOrWhiteSpace($pathPart)) { continue }
